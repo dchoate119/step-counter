@@ -67,6 +67,25 @@ button:disabled { opacity: 0.5; cursor: default; }
 .pills { display: flex; gap: 6px; }
 .pill.rec { background: #dc262622; color: var(--rec); }
 
+.live {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.live-count { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.live-count b { font-size: 3rem; font-variant-numeric: tabular-nums; }
+.live-count span { font-size: 1.3rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.live-count small { color: var(--muted); }
+.live-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.live-row div { display: flex; flex-direction: column; }
+.live-row span { font-size: 0.75rem; color: var(--muted); }
+.live-row b { font-variant-numeric: tabular-nums; }
+.live-controls { display: flex; justify-content: space-between; align-items: center; }
+
 .labels { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 .steps-entry {

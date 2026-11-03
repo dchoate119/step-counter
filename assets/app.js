@@ -1,8 +1,9 @@
-// Step Logger page: label + Start/Stop, step count entry, live status,
-// 5 s plot, recordings list.
-// Python sends "samples" ([t_ms, ax, ay, az, gx, gy, gz] rows), "status" and
-// "recordings" {files: [{file, kb, steps}]}; this page sends "start" {label},
-// "stop" and "steps" {file, steps}.
+// Step Logger page: live count, label + Start/Stop, step count entry, live
+// status, 5 s plot, recordings list.
+// Python sends "live" {count, count_sigma, cadence, cadence_sigma, detector,
+// use_det}, "samples" ([t_ms, ax, ay, az, gx, gy, gz] rows), "status" and
+// "recordings" {files: [{file, kb, steps}]}; this page sends "reset",
+// "mode" {mode: "cnn+det" | "cnn"}, "start" {label}, "stop" and "steps" {file, steps}.
 
 const WINDOW = 250;   // samples on the plot (5 s at 50 Hz)
 
@@ -22,6 +23,21 @@ function setConn(on) {
   $('conn').textContent = on ? 'connected' : 'disconnected';
   $('conn').className = 'pill ' + (on ? 'on' : 'off');
 }
+
+// --- live count ---
+document.querySelectorAll('#modes button').forEach(b => {
+  b.addEventListener('click', () => ui.send_message('mode', { mode: b.dataset.mode }));
+});
+$('reset').addEventListener('click', () => ui.send_message('reset'));
+
+ui.on_message('live', m => {
+  $('count').textContent = Math.round(m.count);
+  $('count-sigma').textContent = `± ${m.count_sigma.toFixed(1)}`;
+  $('cadence').textContent = `${m.cadence.toFixed(2)} ± ${m.cadence_sigma.toFixed(2)} /s`;
+  $('det-count').textContent = m.detector;
+  const mode = m.use_det ? 'cnn+det' : 'cnn';
+  document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('selected', b.dataset.mode === mode));
+});
 
 // --- controls ---
 document.querySelectorAll('#labels button').forEach(b => {

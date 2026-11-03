@@ -1,8 +1,9 @@
-"""Step counter data logger.
+"""Step counter: live count and data logger.
 
-Pulls 50 Hz IMU samples from the sketch every 200 ms, records them to CSV
-between Start and Stop, saves the step count typed in for each walk, and
-streams samples and status to the web page (http://<board-ip>:7000).
+Pulls 50 Hz IMU samples from the sketch every 200 ms, feeds them to the live
+counter (detector + CNN + Kalman filter), records them to CSV between Start
+and Stop, saves the step count typed in for each walk, and streams samples,
+the live count and status to the web page (http://<board-ip>:7000).
 """
 
 import threading
@@ -12,6 +13,7 @@ from arduino.app_bricks.web_ui import WebUI
 from arduino.app_utils import App, Bridge
 
 import recorder
+from live import LiveCounter
 from recorder import Recorder
 
 POLL_S = 0.2
@@ -20,6 +22,7 @@ MAX_BATCH = 50   # must match the sketch
 
 ui = WebUI()
 rec = Recorder()
+counter = LiveCounter()
 lock = threading.Lock()   # page messages arrive on the web server's thread
 
 # Rate stats, refreshed every RATE_WINDOW_S
@@ -70,6 +73,20 @@ def on_steps(sid, data):
     send_recordings()
 
 
+def on_reset(sid, data):
+    with lock:
+        counter.reset()
+        live = counter.state()
+    ui.send_message("live", live)
+
+
+def on_mode(sid, data):
+    with lock:
+        counter.set_mode(data.get("mode") != "cnn")
+        live = counter.state()
+    ui.send_message("live", live)
+
+
 def on_connect(sid):
     ui.send_message("status", status(), room=sid)
     send_recordings(sid)
@@ -102,10 +119,13 @@ def loop():
 
     with lock:
         rec.write(lines)
+        counter.add(lines)
+        live = counter.state()
     update_stats(lines)
 
     samples = [[float(x) for x in line.split(",")] for line in lines]
     ui.send_message("samples", {"samples": samples})
+    ui.send_message("live", live)
     ui.send_message("status", status())
     time.sleep(POLL_S)
 
@@ -113,6 +133,8 @@ def loop():
 ui.on_message("start", on_start)
 ui.on_message("stop", on_stop)
 ui.on_message("steps", on_steps)
+ui.on_message("reset", on_reset)
+ui.on_message("mode", on_mode)
 ui.on_connect(on_connect)
 
 try:

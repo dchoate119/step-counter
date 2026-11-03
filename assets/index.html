@@ -16,6 +16,21 @@
         </div>
       </header>
 
+      <section class="live">
+        <div class="live-count"><b id="count">0</b><span id="count-sigma">± 0.0</span><small>steps</small></div>
+        <div class="live-row">
+          <div><span>Cadence</span><b id="cadence">0.00 ± 0.00 /s</b></div>
+          <div><span>Detector</span><b id="det-count">0</b></div>
+        </div>
+        <div class="live-controls">
+          <div class="toggle" id="modes">
+            <button data-mode="cnn+det" class="selected">CNN + det</button>
+            <button data-mode="cnn">CNN only</button>
+          </div>
+          <button id="reset">Reset</button>
+        </div>
+      </section>
+
       <section class="labels" id="labels">
         <button data-label="still">Still</button>
         <button data-label="walk" class="selected">Walk</button>
