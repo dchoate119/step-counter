@@ -21,7 +21,7 @@ Only walking (any pace up to jogging) and standing still are covered.
 1. [x] **Recording app**: port sketch, recorder and WebUI from gait-identifier. Labels `walk` / `still`; enter step count N at stop.
 2. [x] **Collect**: mixed-pace walks of 50–100 steps, plus still recordings.
 3. [x] **Label**: notebook detects gyro peaks, hand-fix, check 2 × peaks = N → stride timestamps.
-4. [ ]**Live detector**: tune threshold and min gap against labels.
-5. [ ]**Windowed CNN**: train with Gaussian NLL, export JSON, check numpy forward pass matches torch.
-6. [ ]**Kalman filter**: run offline on recordings, tune noise, check σ calibration on fixed-count trials.
-7. [ ]**Board app**: detector + CNN + KF + WebUI live.
+4. [x]**Live detector**: tune threshold and min gap against labels.
+5. [x]**Windowed CNN**: train with Gaussian NLL, export JSON, check numpy forward pass matches torch.
+6. [x]**Kalman filter**: run offline on recordings, tune noise, check σ calibration on fixed-count trials.
+7. [x]**Board app**: detector + CNN + KF + WebUI live.
